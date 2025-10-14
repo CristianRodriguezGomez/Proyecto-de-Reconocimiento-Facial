@@ -1,0 +1,88 @@
+👁️ Detección y Normalización Facial
+Proyecto de Detección de Puntos Clave Faciales (Landmarks)
+Este proyecto implementa un script en Python para la detección precisa de rostros y la localización de 68 puntos clave faciales (landmarks) utilizando las librerías dlib y OpenCV.
+
+El proceso es un paso fundamental en sistemas de visión por computadora, como el Reconocimiento Facial, ya que proporciona las coordenadas necesarias para la posterior alineación geométrica y normalización fotométrica del rostro.
+
+🖼️ Ejemplo de Salida
+Una vez ejecutado, el script genera una imagen con el bounding box del rostro y los 68 puntos clave superpuestos, como se muestra a continuación:
+
+!
+
+📜 Descripción Detallada
+El objetivo principal del script es identificar y marcar puntos anatómicos específicos en un rostro (esquinas de los ojos, punta de la nariz, contorno de la boca y mandíbula). Esta información es la base para aplicaciones avanzadas como:
+
+Alineación Facial Biometríca: Corrección de inclinación y escala de rostros.
+
+Reconocimiento de expresiones faciales.
+
+Seguimiento de rostros en video.
+
+Realidad Aumentada (ej. filtros faciales).
+
+📂 Estructura del Proyecto
+El proyecto mantiene una estructura clara para la gestión de modelos y datos de entrada/salida:
+
+Proyecto_Reconocimiento_Facial/
+│
+├── input_fotos/
+│   └── rostro_prueba.jpg         # 📥 Directorio para las imágenes de entrada
+├── modelos/
+│   └── shape_predictor_68_face_landmarks.dat # 🧠 Modelo pre-entrenado de Dlib
+├── env_facial/                   # 🐍 Entorno virtual de Python (Recomendado)
+│
+├── deteccion_puntos_clave.py     # 🚀 Script principal de detección
+│
+├── 1_deteccion_puntos_clave.jpg  # 🖼️ Imagen de salida con los puntos clave
+├── temp_puntos_clave.npy         # 💾 Array de NumPy con las coordenadas (68x2)
+└── README.md                     # 📖 Este archivo
+⚙️ Requisitos y Configuración
+Para ejecutar este proyecto, necesitas tener Python 3 y las siguientes dependencias instaladas.
+
+1. Dependencias
+Se recomienda encarecidamente trabajar dentro de un entorno virtual para aislar las dependencias:
+
+Bash
+
+# 1. Crear y activar un entorno virtual (env_facial)
+python -m venv env_facial
+# En Windows
+.\env_facial\Scripts\activate
+# En macOS/Linux
+source env_facial/bin/activate
+
+# 2. Instalar las dependencias requeridas
+pip install opencv-python dlib numpy
+2. Modelo Pre-entrenado
+El script requiere el archivo binario del modelo de puntos clave de dlib: shape_predictor_68_face_landmarks.dat.
+
+Descarga: Obtén el archivo shape_predictor_68_face_landmarks.dat del repositorio oficial de dlib (o la versión comprimida .bz2).
+
+Ubicación: Coloca el archivo descomprimido directamente dentro de la carpeta modelos/.
+
+🚀 Cómo Usar el Script
+Sigue estos sencillos pasos para procesar una nueva imagen:
+
+Coloca tu Imagen: Añade la imagen que deseas procesar dentro de la carpeta input_fotos/.
+
+Actualiza la Configuración: Abre el script deteccion_puntos_clave.py y modifica la variable NOMBRE_IMAGEN_ENTRADA con el nombre de tu archivo:
+
+Python
+
+# --- Configuraciones ---
+# ... otras variables
+NOMBRE_IMAGEN_ENTRADA = os.path.join("input_fotos", "tu_imagen.jpg") # <-- Cambia esto
+Ejecuta el script: Desde tu terminal (con el entorno virtual activado), ejecuta el comando:
+
+Bash
+
+python deteccion_puntos_clave.py
+Archivos de Salida
+El script generará los siguientes archivos en la carpeta raíz del proyecto:
+
+Archivo	Descripción
+1_deteccion_puntos_clave.jpg	Imagen de salida con el rostro enmarcado y los 68 puntos clave en color azul.
+temp_puntos_clave.npy	Array binario de NumPy (68x2) con las coordenadas x,y de los landmarks. (Usado por scripts posteriores)
+temp_imagen_original.jpg	Copia sin modificar de la imagen de entrada. (Usado por scripts posteriores)
+
+Exportar a Hojas de cálculo
