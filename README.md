@@ -85,4 +85,41 @@ Archivo	Descripción
 temp_puntos_clave.npy	Array binario de NumPy (68x2) con las coordenadas x,y de los landmarks. (Usado por scripts posteriores)
 temp_imagen_original.jpg	Copia sin modificar de la imagen de entrada. (Usado por scripts posteriores)
 
+## 🎨 Filtros de Mejoramiento de Imagen
+
+El script `filtros_mejoramiento.py` aplica **3 tipos de filtros secuencialmente**:
+
+### Filtros Aplicados (en orden)
+
+1. **Filtro ESTADÍSTICO - Mediana (ksize=5)**
+   - Elimina ruido tipo "sal y pimienta"
+   - Preserva bordes sin desenfocar
+   - Salida: `3.1_filtro_mediana.jpg`
+
+2. **Filtro SUAVIZANTE - Gaussiano (ksize=5)**
+   - Suaviza la imagen reduciendo ruido de alta frecuencia
+   - Reduce detalles finos manteniendo estructura general
+   - Salida: `3.2_filtro_gaussiano.jpg`
+
+3. **Filtro REALZANTE - CLAHE**
+   - Mejora el contraste local de forma adaptativa
+   - Normalización fotométrica para reconocimiento facial
+   - Salida: `3.3_filtro_clahe.jpg`
+
+### Uso
+
+```bash
+# Ejecutar el script (procesa temp_rostro_alineado.jpg por defecto)
+python filtros_mejoramiento.py
+```
+
+### Archivos Generados
+
+El script genera **3 imágenes de salida**, una después de cada filtro:
+- `3.1_filtro_mediana.jpg` - Imagen tras filtro estadístico
+- `3.2_filtro_gaussiano.jpg` - Imagen tras filtro suavizante  
+- `3.3_filtro_clahe.jpg` - Imagen final con los 3 filtros aplicados
+
+---
+
 Exportar a Hojas de cálculo

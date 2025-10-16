@@ -1,56 +1,84 @@
-import cv2  # Importación de OpenCV para procesamiento de imágenes y filtros.
-import numpy as np  # Importación de NumPy (aunque no se usa directamente en operaciones aquí, es estándar).
-import os  # Importación de 'os' (aunque no se usa directamente en operaciones aquí, es estándar).
+import cv2  # OpenCV para procesamiento de imágenes y filtros.
+import numpy as np
 
-# PEP 8: Se dejan dos líneas en blanco después de las importaciones.
 # --- Configuraciones ---
-# Nombre de la imagen de entrada que ya fue alineada geométricamente.
 NOMBRE_IMAGEN_ALINEADA = "temp_rostro_alineado.jpg"
 
-# Mensaje informativo.
-print("--- 3. Aplicando Filtros con OpenCV: Normalización Fotométrica ---")
+print("=" * 70)
+print("   SCRIPT 3: APLICACIÓN DE FILTROS DE MEJORAMIENTO")
+print("=" * 70)
+print("\nAplicando filtros secuencialmente:")
+print("  1. Filtro Estadístico: Mediana (Reduce ruido sal y pimienta)")
+print("  2. Filtro Suavizante: Gaussiano (Suaviza la imagen)")
+print("  3. Filtro Realzante: CLAHE (Mejora contraste local)\n")
 
 # 1. Cargar la imagen alineada
-# Lee la imagen que se generó en el Script 2.
 rostro_alineado = cv2.imread(NOMBRE_IMAGEN_ALINEADA)
-# Verificación si la imagen se cargó correctamente.
 if rostro_alineado is None:
-    print("ERROR: No se pudo cargar el rostro alineado. Ejecute el Script 2 primero.")
+    print("ERROR: No se pudo cargar el rostro alineado.")
+    print(f"Asegúrate de que existe el archivo: {NOMBRE_IMAGEN_ALINEADA}")
     exit()
 
-# Convertir a escala de grises, requerido para CLAHE y Mediana
-# Convierte la imagen BGR (color) a escala de grises, optimizando el procesamiento.
+# Convertir a escala de grises (requerido para muchos filtros)
 gris_rostro = cv2.cvtColor(rostro_alineado, cv2.COLOR_BGR2GRAY)
+print(f"✓ Imagen cargada: {gris_rostro.shape}")
 
 
-# PEP 8: Separador de sección lógica con comentarios.
-# --- Filtro 1: Realzante / Normalización Fotométrica (CLAHE) ---
-# Usa la Ecualización Adaptativa del Histograma con OpenCV
-# Crea el objeto CLAHE (Contrast Limited Adaptive Histogram Equalization).
-clahe_obj = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-# Aplica el CLAHE a la imagen en escala de grises para mejorar el contraste local.
-imagen_clahe = clahe_obj.apply(gris_rostro)
-print("Filtro 1 (CLAHE) aplicado: Corrección de iluminación (Normalización Fotométrica).")
+# ============================================================================
+# FILTRO 1: ESTADÍSTICO - Filtro de Mediana
+# ============================================================================
+print("\n[1/3] Aplicando Filtro ESTADÍSTICO (Mediana - ksize=5)...")
+print("      → Elimina ruido tipo 'sal y pimienta' sin desenfocar bordes")
+
+imagen_mediana = cv2.medianBlur(gris_rostro, 5)
+
+# Guardar salida del primer filtro
+output_1 = "3.1_filtro_mediana.jpg"
+rostro_mediana_bgr = cv2.cvtColor(imagen_mediana, cv2.COLOR_GRAY2BGR)
+cv2.imwrite(output_1, rostro_mediana_bgr)
+print(f"      ✓ Guardado: {output_1}")
 
 
-# PEP 8: Separador de sección lógica con comentarios.
-# --- Filtro 2: Suavizante (Mediana) ---
-# Usa el Filtro Mediana de OpenCV para reducir ruido.
-# Aplica un filtro de mediana con un kernel de 5x5 para reducir ruido tipo "sal y pimienta".
-imagen_suavizada = cv2.medianBlur(imagen_clahe, 5)
-print("Filtro 2 (Mediana) aplicado: Reducción de ruido.")
+# ============================================================================
+# FILTRO 2: SUAVIZANTE - Filtro Gaussiano
+# ============================================================================
+print("\n[2/3] Aplicando Filtro SUAVIZANTE (Gaussiano - ksize=5)...")
+print("      → Suaviza la imagen reduciendo detalles y ruido de alta frecuencia")
+
+imagen_gaussiana = cv2.GaussianBlur(imagen_mediana, (5, 5), 0)
+
+# Guardar salida del segundo filtro
+output_2 = "3.2_filtro_gaussiano.jpg"
+rostro_gaussiano_bgr = cv2.cvtColor(imagen_gaussiana, cv2.COLOR_GRAY2BGR)
+cv2.imwrite(output_2, rostro_gaussiano_bgr)
+print(f"      ✓ Guardado: {output_2}")
 
 
-# Opcional: Normalización de Escala de Píxeles (Algorítmica)
-# Esto es esencial antes de la fase de Embeddings (ArcFace).
-# Convierte los valores de píxeles a flotante y los normaliza al rango [0, 1].
-pixeles_normalizados = imagen_suavizada.astype("float32") / 255.0
+# ============================================================================
+# FILTRO 3: REALZANTE - CLAHE (Contrast Limited Adaptive Histogram Equalization)
+# ============================================================================
+print("\n[3/3] Aplicando Filtro REALZANTE (CLAHE)...")
+print("      → Mejora el contraste local de forma adaptativa")
 
-# 2. Guardar el resultado final
-# Para guardar como JPG, lo convertimos de nuevo a 3 canales de color
-# El filtro Mediana arrojó una imagen en gris; se convierte de nuevo a BGR (3 canales) para el guardado en JPG.
-rostro_procesado_final = cv2.cvtColor(imagen_suavizada, cv2.COLOR_GRAY2BGR)
-output_filename = "3_rostro_final_procesado.jpg"
-# Guarda la imagen final después de la normalización fotométrica.
-cv2.imwrite(output_filename, rostro_procesado_final)
-print(f"Resultado final guardado en: {output_filename}")
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+imagen_clahe = clahe.apply(imagen_gaussiana)
+
+# Guardar salida del tercer filtro
+output_3 = "3.3_filtro_clahe.jpg"
+rostro_clahe_bgr = cv2.cvtColor(imagen_clahe, cv2.COLOR_GRAY2BGR)
+cv2.imwrite(output_3, rostro_clahe_bgr)
+print(f"      ✓ Guardado: {output_3}")
+
+
+# ============================================================================
+# IMAGEN FINAL PROCESADA
+# ============================================================================
+print("\n" + "=" * 70)
+print("✓ PROCESO COMPLETADO")
+print("=" * 70)
+print("\nArchivos generados:")
+print(f"  1. {output_1}  ← Después del filtro Mediana (Estadístico)")
+print(f"  2. {output_2}  ← Después del filtro Gaussiano (Suavizante)")
+print(f"  3. {output_3}  ← Después del filtro CLAHE (Realzante)")
+print("\nLa imagen final ha pasado por los 3 tipos de filtros secuencialmente.")
+print("=" * 70)
