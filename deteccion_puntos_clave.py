@@ -2,12 +2,15 @@ import cv2  # Importación de la librería OpenCV para procesamiento de imágene
 import dlib  # Importación de dlib, usado aquí para detección de rostros y puntos clave (landmarks).
 import numpy as np  # Importación de NumPy para manejo eficiente de arrays numéricos, especialmente para los puntos clave.
 import os  # Importación de la librería 'os' para manejo de rutas de archivos, manteniendo el código portable.
+from datetime import datetime
 
 # PEP 8: Constantes (como las rutas) suelen ir en MAYÚSCULAS con guiones bajos.
 # Aunque las rutas se usan como variables de configuración, el código las mantiene con ese nombre.
 # --- Configuraciones ---
 RUTA_MODELO_LANDMARKS = os.path.join("modelos", "shape_predictor_68_face_landmarks.dat")
-NOMBRE_IMAGEN_ENTRADA = os.path.join("input_fotos", "rostro_prueba.jpg") 
+NOMBRE_IMAGEN_ENTRADA = os.path.join("input_fotos", "RamonAbajo.jpg") 
+RUTA_SALIDA = "output_fotos_deteccion_puntos"
+os.makedirs(RUTA_SALIDA, exist_ok=True)
 
 # PEP 8: Se dejan dos líneas en blanco después de las importaciones (ya está correcto).
 # Inicializar detectores
@@ -71,13 +74,13 @@ for (x, y) in puntos_clave_array:
     # Comentario útil sobre la sintaxis de cv2.circle.
     # cv2.circle(imagen, centro, radio, color, grosor)
     # Dibuja un círculo azul (255, 0, 0 en BGR) de radio 2, relleno (-1).
-    cv2.circle(imagen_visualizacion, (x, y), 2, (255, 0, 0), -1) 
+    cv2.circle(imagen_visualizacion, (x, y), 5, (255, 0, 0), -1) 
 
 # También dibujamos el bounding box (opcional pero útil)
 # Desempaqueta las coordenadas y dimensiones del rectángulo (bounding box) de dlib.
 (x, y, w, h) = (rect.left(), rect.top(), rect.width(), rect.height())
 # Dibuja el rectángulo verde (0, 255, 0 en BGR) con grosor de 2 píxeles.
-cv2.rectangle(imagen_visualizacion, (x, y), (x + w, y + h), (0, 255, 0), 2)
+cv2.rectangle(imagen_visualizacion, (x, y), (x + w, y + h), (0, 255, 0), 10)
 
 
 # 4. Guardar los archivos de salida
@@ -88,8 +91,18 @@ cv2.imwrite("temp_imagen_original.jpg", imagen)
 
 # ¡Guardamos la imagen con los dibujos!
 # Guarda la imagen final con los puntos clave y el rectángulo dibujados.
-cv2.imwrite("1_deteccion_puntos_clave.jpg", imagen_visualizacion) 
+#cv2.imwrite("1_deteccion_puntos_clave.jpg", imagen_visualizacion) 
+
+# <-- 3. GENERAR NOMBRE DE ARCHIVO CON TIMESTAMP ---
+# Obtiene la fecha y hora actual y la formatea como 'AñoMesDia_HoraMinutoSegundo'
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+nombre_archivo_salida = f"deteccion-{timestamp}.jpg"
+ruta_completa_salida = os.path.join(RUTA_SALIDA, nombre_archivo_salida)
+
+# <-- 4. GUARDAR LA IMAGEN CON EL NUEVO NOMBRE ---
+# Guarda la imagen final con los puntos clave y el rectángulo dibujados.
+cv2.imwrite(ruta_completa_salida, imagen_visualizacion)
 
 # Mensajes de salida.
 print("Archivos temporales guardados.")
-print("Imagen de visualización con landmarks guardada en: 1_deteccion_puntos_clave.jpg")
+print("Imagen de visualización con landmarks guardada en la carpeta de outputfotos")
