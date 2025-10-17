@@ -8,7 +8,7 @@ from datetime import datetime
 # Aunque las rutas se usan como variables de configuración, el código las mantiene con ese nombre.
 # --- Configuraciones ---
 RUTA_MODELO_LANDMARKS = os.path.join("modelos", "shape_predictor_68_face_landmarks.dat")
-NOMBRE_IMAGEN_ENTRADA = os.path.join("input_fotos", "RamonAbajo.jpg") 
+NOMBRE_IMAGEN_ENTRADA = os.path.join("input_fotos", "CristianFrente.jpg") 
 RUTA_SALIDA = "output_fotos_deteccion_puntos"
 os.makedirs(RUTA_SALIDA, exist_ok=True)
 
