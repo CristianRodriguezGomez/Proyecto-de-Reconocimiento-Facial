@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import os
 
-NOMBRE_IMAGEN_ALINEADA = "2_rostro_alineado.jpg"  # Asegúrate que este archivo existe.
-RUTA_SALIDA_FILTROS = "output_imagenes_filtrado"
+NOMBRE_IMAGEN_ALINEADA = "output_fotos_alineacion/2_rostro_alineado.jpg"  # Asegúrate que este archivo existe.
+RUTA_SALIDA_FILTROS = "output_fotos_filtrado"
 
 # Crear el directorio de salida si no existe
 os.makedirs(RUTA_SALIDA_FILTROS, exist_ok=True)

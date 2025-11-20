@@ -3,11 +3,12 @@ import numpy as np
 import os
 
 # --- Configuraciones de Entrada ---
+RUTA_ENTRADA_FILTROS = "output_fotos_filtrado"  # Directorio donde están las imágenes filtradas
 ARCHIVOS_ENTRADA = [
     "3.1_filtro_mediana.jpg",  # Esquema 1: Mediana
-    "3.2_filtro_gaussiano.jpg", # Esquema 2: Mediana + Gaussiano
-    "3.3_filtro_highboost.jpg", # Esquema 3: Mediana + Gaussiano + CLAHE
-    "3.4_filtro_combinado.jpg", # Esquema 3: Mediana + Gaussiano + CLAHE
+    "3.2_filtro_gaussiano.jpg", # Esquema 2: Gaussiano
+    "3.3_filtro_highboost.jpg", # Esquema 3: High-Boost
+    "3.4_filtro_combinado.jpg", # Esquema 4: Combinación Secuencial
 ]
 
 RUTA_SALIDA_UMBRALIZACION = "output_fotos_umbralizacion"
@@ -22,10 +23,11 @@ for nombre_archivo in ARCHIVOS_ENTRADA:
     print(f"\n[PROCESANDO] Esquema: {nombre_archivo}")
     
     # 1. Cargar la imagen (ya en BGR, pero la convertimos a GRIS para umbralización)
-    img_bgr = cv2.imread(nombre_archivo)
+    ruta_completa_entrada = os.path.join(RUTA_ENTRADA_FILTROS, nombre_archivo)
+    img_bgr = cv2.imread(ruta_completa_entrada)
     
     if img_bgr is None:
-        print(f"ERROR: No se pudo cargar el archivo: {nombre_archivo}. Omtiendo.")
+        print(f"ERROR: No se pudo cargar el archivo: {ruta_completa_entrada}. Omitiendo.")
         continue
     
     # La umbralización se aplica a imágenes en escala de grises
@@ -61,6 +63,6 @@ for nombre_archivo in ARCHIVOS_ENTRADA:
 print("\n" + "=" * 70)
 print("SEGMENTACIÓN COMPLETADA")
 print("=" * 70)
-print("Se han generado 6 imágenes de salida (3 por técnica de umbralización).")
+print(f"Se han generado {len(ARCHIVOS_ENTRADA) * 2} imágenes de salida (2 por cada esquema de filtrado).")
 print("Se recomienda **inspeccionar visualmente** las imágenes guardadas para evaluar el desempeño.")
 print("=" * 70)
