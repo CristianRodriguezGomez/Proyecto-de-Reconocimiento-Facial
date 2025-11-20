@@ -13,8 +13,9 @@ with Diagram("Pipeline de Preprocesamiento Facial", show=False, direction="LR", 
 
     with Cluster("Fase 1: Adquisición y Detección"):
         acquisition = File("Obtención de Imágenes\n(5 fotos por integrante)")
+        estandarizacion = Blank("Estandarización de \n formato y resolución \n de imágenes")
         detection = Rack("1. Detección de 68 \n Puntos Clave\n(Landmarks Faciales)")
-        acquisition >> detection
+        acquisition >> estandarizacion >> detection 
 
     with Cluster("Bucle para cada imagen del dataset"):
         process_loop = Switch("...")
@@ -47,14 +48,21 @@ with Diagram("Pipeline de Preprocesamiento Facial", show=False, direction="LR", 
             high_boost = Blank("Filtro Realzante\n(Ej. High-Boost)")
             aligned_face >> filters_application >> median_filter >> gaussian_filter >> high_boost
 
-        enhanced_face = Tablet("Rostro Final Mejorado")
+        enhanced_face = Tablet("Rostro Final Mejorado con Filtros")
         high_boost >> enhanced_face
+
+        with Cluster("Fase 4: Segmentación"):
+            umbral_global = Rack("Umbralización global\n simple")
+            umbral_otsu = Blank("Umbralización de Otsu")
+            enhanced_face >> umbral_global 
+            enhanced_face >> umbral_otsu
         
-        save_image = File("Guardar imagen procesada")
-        enhanced_face >> save_image
+        save_image = File("Guardar imagen procesada \n y segmentada")
+        umbral_otsu >> save_image
+        umbral_global >> save_image
         save_image >> process_loop
 
-    final_dataset = File("Dataset Final de Rostros Preprocesados")
+    final_dataset = File("Dataset Final de Rostros \n Preprocesados y Segmentados")
 
     start >> acquisition
     process_loop >> Edge(label="Fin del bucle") >> final_dataset
