@@ -122,4 +122,27 @@ El script genera **3 imágenes de salida**, una después de cada filtro:
 
 ---
 
+## 🎭 Segmentación de Rasgos Faciales
+
+El script `5_segmentacion_rasgos.py` se encarga de aislar y segmentar características faciales clave (ojos, nariz y boca) utilizando los puntos clave detectados previamente.
+
+### Método Utilizado
+
+1.  **Creación de Máscaras Poligonales**: Para cada rasgo, se genera una máscara poligonal conectando los puntos clave correspondientes (landmarks) para definir el área de interés.
+2.  **Aislamiento del Rasgo**: Se utiliza la máscara para recortar el rasgo de la imagen del rostro alineado, dejando el resto de la imagen en negro.
+3.  **Umbralización de Otsu**: Sobre el rasgo aislado, se aplica la umbralización de Otsu. Este método calcula automáticamente el umbral óptimo para binarizar la imagen, separando eficazmente el rasgo del fondo.
+
+### Uso
+
+```bash
+# Ejecutar el script (procesa 2_rostro_alineado.jpg y temp_puntos_clave.npy)
+python 5_segmentacion_rasgos.py
+```
+
+### Archivos Generados
+
+El script genera dos imágenes por cada rasgo en la carpeta `output_fotos_segmentacion_rasgos/`:
+- `5.1_mascara_[rasgo].jpg`: La máscara poligonal blanca sobre fondo negro.
+- `5.2_segmentado_[rasgo].jpg`: El rasgo final segmentado (binarizado).
+
 Exportar a Hojas de cálculo
